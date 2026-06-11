@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký Thành viên - Phiên chợ Xanh Tử tế</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        green: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f3f4f6;
+        }
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        .file-upload-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background-color: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 0.5rem;
+            color: #64748b;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        .file-upload-wrapper:hover .file-upload-label {
+            background-color: #f1f5f9;
+            border-color: #94a3b8;
+            color: #475569;
+        }
+        .file-upload-wrapper.has-file .file-upload-label {
+            background-color: #f0fdf4;
+            border-color: #86efac;
+            color: #166534;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+            background-color: #ffffff;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+        }
+        .section-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 2rem;
+            padding: 2rem;
+        }
+        .section-title {
+            color: #166534;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased">
+
+    <header class="bg-green-700 text-white py-8 shadow-md">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white text-green-700 mb-4 shadow-lg">
+                <i class="fa-solid fa-leaf text-3xl"></i>
+            </div>
+            <h1 class="text-3xl font-bold tracking-tight">HỒ SƠ ĐĂNG KÝ THÀNH VIÊN</h1>
+            <p class="mt-2 text-green-100 text-lg font-medium">Dự án Phiên chợ Xanh Tử tế</p>
+            <p class="mt-1 text-sm text-green-200">Vui lòng điền đầy đủ thông tin bên dưới để hoàn tất hồ sơ đăng ký.</p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <form id="registrationForm" onsubmit="handleFormSubmit(event)">
+            
+            <div class="section-card">
+                <h2 class="section-title"><i class="fa-regular fa-building"></i> I. THÔNG TIN CHÍNH DOANH NGHIỆP</h2>
+                
+                <div class="space-y-6">
+                    <!-- 1. Contact Info -->
+                    <div>
+                        <h3 class="font-semibold text-gray-700 mb-3">1. Thông tin liên hệ người chịu trách nhiệm</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">Họ và tên *</label>
+                                <input type="text" class="form-input" required placeholder="Nguyễn Văn A">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">Chức vụ *</label>
+                                <input type="text" class="form-input" required placeholder="Giám đốc">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">Số điện thoại *</label>
+                                <input type="tel" class="form-input" required placeholder="0909xxx...">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">Email *</label>
+                                <input type="email" class="form-input" required placeholder="email@congty.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Tỉnh thành -->
+                    <div>
+                        <h3 class="font-semibold text-gray-700 mb-2">2. Tỉnh/Thành phố nơi đặt trụ sở chính *</h3>
+                        <input type="text" class="form-input max-w-md" required placeholder="VD: TP. Hồ Chí Minh">
+                    </div>
+
+                    <!-- Addresses & Images -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-semibold text-gray-700 mb-2">3. Trụ sở chính công ty *</h3>
+                            <input type="text" class="form-input mb-3" required placeholder="Địa chỉ chi tiết...">
+                            <div class="file-upload-wrapper">
+                                <input type="file" class="file-upload-input" accept="image/*" onchange="updateFileName(this)">
+                                <div class="file-upload-label">
+                                    <i class="fa-solid fa-camera"></i> <span>Đính kèm hình ảnh thực tế</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-semibold text-gray-700 mb-2">4. Địa chỉ chi nhánh (nếu có)</h3>
+                            <input type="text" class="form-input mb-3" placeholder="Địa chỉ chi tiết...">
+                            <div class="file-upload-wrapper">
+                                <input type="file" class="file-upload-input" accept="image/*" onchange="updateFileName(this)">
+                                <div class="file-upload-label">
+                                    <i class="fa-solid fa-camera"></i> <span>Đính kèm hình ảnh thực tế</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-semibold text-gray-700 mb-2">5. Địa chỉ nhà máy sản xuất *</h3>
+                            <input type="text" class="form-input mb-3" required placeholder="Địa chỉ chi tiết...">
+                            <div class="file-upload-wrapper">
+                                <input type="file" class="file-upload-input" accept="image/*" onchange="updateFileName(this)">
+                                <div class="file-upload-label">
+                                    <i class="fa-solid fa-camera"></i> <span>Đính kèm hình ảnh thực tế</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-semibold text-gray-700 mb-2">6. Địa chỉ vùng nguyên liệu *</h3>
+                            <input type="text" class="form-input mb-3" required placeholder="Địa chỉ chi tiết...">
+                            <div class="file-upload-wrapper">
+                                <input type="file" class="file-upload-input" accept="image/*" onchange="updateFileName(this)">
+                                <div class="file-upload-label">
+                                    <i class="fa-solid fa-camera"></i> <span>Đính kèm hình ảnh thực tế</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 7. History -->
+                    <div>
+                        <h3 class="font-semibold text-gray-700 mb-2">7. Giới thiệu lịch sử công ty & quy trình sản xuất *</h3>
+                        <textarea class="form-input mb-3" rows="4" required placeholder="Mô tả ngắn gọn về lịch sử hình thành và quy trình sản xuất/canh tác..."></textarea>
+                        <div class="file-upload-wrapper max-w-md">
+                            <input type="file" class="file-upload-input" accept=".pdf,.doc,.docx" required onchange="updateFileName(this)">
+                            <div class="file-upload-label">
+                                <i class="fa-solid fa-file-pdf"></i> <span>Đính kèm bảng mô tả chi tiết (PDF/Word)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 8. Product List -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-semibold text-gray-700">8. Danh sách sản phẩm đăng ký tham gia</h3>
+                            <button type="button" onclick="addProduct()" class="bg-green-100 text-green-700 hover:bg-green-200 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                                <i class="fa-solid fa-plus"></i> Thêm sản phẩm
+                            </button>
+                        </div>
+                        
+                        <div id="product-container" class="space-y-4">
+                            <!-- Product Item 1 (Khởi tạo sẵn) -->
+                            <div id="product-item-1" class="product-item bg-white border border-gray-200 rounded-lg p-4 relative shadow-sm">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Tên sản phẩm *</label>
+                                        <input type="text" class="form-input text-sm" required placeholder="Tên sản phẩm..." oninput="syncProductName(1, this.value)">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Đơn vị đóng gói *</label>
+                                            <input type="text" class="form-input text-sm" required placeholder="Hộp/Túi/Kg...">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Giá bán (VNĐ) *</label>
+                                            <input type="number" class="form-input text-sm" required placeholder="100000">
+                                        </div>
+                                    </div>
+                                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Thành phần *</label>
+                                            <input type="text" class="form-input text-sm" required placeholder="...">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Bảo quản *</label>
+                                            <input type="text" class="form-input text-sm" required placeholder="...">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Hình ảnh *</label>
+                                            <div class="file-upload-wrapper h-[42px]">
+                                                <input type="file" class="file-upload-input" accept="image/*" required onchange="updateFileName(this)">
+                                                <div class="file-upload-label h-full text-sm">
+                                                    <i class="fa-solid fa-upload"></i> <span class="truncate max-w-[100px]">Chọn ảnh</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2 class="section-title"><i class="fa-solid fa-folder-open"></i> II. HỒ SƠ DOANH NGHIỆP</h2>
+                <p class="text-sm text-gray-600 mb-6 italic">Cung cấp thông tin số giấy phép, ngày cấp, ngày hết hạn và file đính kèm cho các loại giấy tờ sau:</p>
+
+                <div class="space-y-6">
+                    <!-- Document 1 -->
+                    <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
+                            <h3 class="font-bold text-gray-800">1. Giấy phép Kinh doanh *</h3>
+                            <div class="file-upload-wrapper md:w-auto min-w-[250px]">
+                                <input type="file" class="file-upload-input" accept=".pdf,.jpg,.png" required onchange="updateFileName(this)">
+                                <div class="file-upload-label bg-white">
+                                    <i class="fa-solid fa-paperclip"></i> <span>Đính kèm file GPKD</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Số giấy phép *</label>
+                                <input type="text" class="form-input text-sm" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Ngày cấp *</label>
+                                <input type="date" class="form-input text-sm" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Ngày hết hạn (Nếu có)</label>
+                                <input type="date" class="form-input text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Document 2 -->
+                    <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                        <div class="flex flex-col md:flex-row md:items-start justify-between mb-4 gap-4">
+                            <h3 class="font-bold text-gray-800">2. Tiêu chuẩn nhà xưởng *</h3>
+                            <div class="file-upload-wrapper md:w-auto min-w-[250px]">
+                                <input type="file" class="file-upload-input" accept=".pdf,.jpg,.png" multiple required onchange="updateFileName(this, true)">
+                                <div class="file-upload-label bg-white">
+                                    <i class="fa-solid fa-paperclip"></i> <span>Đính kèm các chứng nhận</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p class="text-sm text-gray-600 mb-3">Chọn các tiêu chuẩn doanh nghiệp đạt được và điền thông tin tương ứng:</p>
+                        
+                        <div class="space-y-3 bg-white p-4 rounded border border-gray-200">
+                            <!-- VSATTP -->
+                            <div class="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                                <label class="inline-flex items-center text-sm font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" class="mr-2 rounded text-green-600 focus:ring-green-500 w-4 h-4" onchange="toggleStandardDetails(this, 'tc-vsattp')"> 
+                                    Vệ sinh an toàn thực phẩm (VSATTP)
+                                </label>
+                                <div id="tc-vsattp" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 mt-3 pl-6">
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Số giấy phép</label><input type="text" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày cấp</label><input type="date" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày hết hạn</label><input type="date" class="form-input text-sm"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- HACCP -->
+                            <div class="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                                <label class="inline-flex items-center text-sm font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" class="mr-2 rounded text-green-600 focus:ring-green-500 w-4 h-4" onchange="toggleStandardDetails(this, 'tc-haccp')"> 
+                                    HACCP
+                                </label>
+                                <div id="tc-haccp" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 mt-3 pl-6">
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Số giấy phép</label><input type="text" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày cấp</label><input type="date" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày hết hạn</label><input type="date" class="form-input text-sm"></div>
+                                </div>
+                            </div>
+
+                            <!-- ISO -->
+                            <div class="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                                <label class="inline-flex items-center text-sm font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" class="mr-2 rounded text-green-600 focus:ring-green-500 w-4 h-4" onchange="toggleStandardDetails(this, 'tc-iso')"> 
+                                    ISO
+                                </label>
+                                <div id="tc-iso" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 mt-3 pl-6">
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Số giấy phép</label><input type="text" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày cấp</label><input type="date" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày hết hạn</label><input type="date" class="form-input text-sm"></div>
+                                </div>
+                            </div>
+
+                            <!-- FSSC -->
+                            <div class="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                                <label class="inline-flex items-center text-sm font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" class="mr-2 rounded text-green-600 focus:ring-green-500 w-4 h-4" onchange="toggleStandardDetails(this, 'tc-fssc')"> 
+                                    FSSC
+                                </label>
+                                <div id="tc-fssc" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 mt-3 pl-6">
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Số giấy phép</label><input type="text" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày cấp</label><input type="date" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày hết hạn</label><input type="date" class="form-input text-sm"></div>
+                                </div>
+                            </div>
+
+                            <!-- HALAL -->
+                            <div class="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                                <label class="inline-flex items-center text-sm font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" class="mr-2 rounded text-green-600 focus:ring-green-500 w-4 h-4" onchange="toggleStandardDetails(this, 'tc-halal')"> 
+                                    HALAL
+                                </label>
+                                <div id="tc-halal" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 mt-3 pl-6">
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Số giấy phép</label><input type="text" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày cấp</label><input type="date" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày hết hạn</label><input type="date" class="form-input text-sm"></div>
+                                </div>
+                            </div>
+
+                            <!-- FDA -->
+                            <div class="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                                <label class="inline-flex items-center text-sm font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" class="mr-2 rounded text-green-600 focus:ring-green-500 w-4 h-4" onchange="toggleStandardDetails(this, 'tc-fda')"> 
+                                    FDA
+                                </label>
+                                <div id="tc-fda" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 mt-3 pl-6">
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Số giấy phép</label><input type="text" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày cấp</label><input type="date" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày hết hạn</label><input type="date" class="form-input text-sm"></div>
+                                </div>
+                            </div>
+
+                            <!-- ORGANIC -->
+                            <div class="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                                <label class="inline-flex items-center text-sm font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" class="mr-2 rounded text-green-600 focus:ring-green-500 w-4 h-4" onchange="toggleStandardDetails(this, 'tc-organic')"> 
+                                    ORGANIC
+                                </label>
+                                <div id="tc-organic" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 mt-3 pl-6">
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Số giấy phép</label><input type="text" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày cấp</label><input type="date" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày hết hạn</label><input type="date" class="form-input text-sm"></div>
+                                </div>
+                            </div>
+
+                            <!-- KHÁC -->
+                            <div class="pt-1">
+                                <label class="inline-flex items-center text-sm font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" class="mr-2 rounded text-green-600 focus:ring-green-500 w-4 h-4" onchange="toggleStandardDetails(this, 'tc-other')"> 
+                                    Tiêu chuẩn khác
+                                </label>
+                                <div id="tc-other" class="hidden mt-3 pl-6">
+                                    <input type="text" class="form-input text-sm mb-3 max-w-md" placeholder="Vui lòng ghi rõ tên tiêu chuẩn...">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div><label class="block text-xs font-medium text-gray-500 mb-1">Số giấy phép</label><input type="text" class="form-input text-sm"></div>
+                                        <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày cấp</label><input type="date" class="form-input text-sm"></div>
+                                        <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày hết hạn</label><input type="date" class="form-input text-sm"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Document 3 -->
+                    <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                        <div class="flex flex-col md:flex-row md:items-start justify-between mb-4 gap-4">
+                            <h3 class="font-bold text-gray-800">3. Tiêu chuẩn vùng nguyên liệu/canh tác *</h3>
+                            <div class="file-upload-wrapper md:w-auto min-w-[250px]">
+                                <input type="file" class="file-upload-input" accept=".pdf,.jpg,.png" multiple required onchange="updateFileName(this, true)">
+                                <div class="file-upload-label bg-white">
+                                    <i class="fa-solid fa-paperclip"></i> <span>Đính kèm các chứng nhận</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p class="text-sm text-gray-600 mb-3">Chọn các tiêu chuẩn vùng trồng/canh tác doanh nghiệp đạt được và điền thông tin tương ứng:</p>
+                        
+                        <div class="space-y-3 bg-white p-4 rounded border border-gray-200">
+                            <!-- VIETGAP -->
+                            <div class="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                                <label class="inline-flex items-center text-sm font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" class="mr-2 rounded text-green-600 focus:ring-green-500 w-4 h-4" onchange="toggleStandardDetails(this, 'tc-raw-vietgap')"> 
+                                    VIETGAP
+                                </label>
+                                <div id="tc-raw-vietgap" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 mt-3 pl-6">
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Số giấy phép</label><input type="text" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày cấp</label><input type="date" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày hết hạn</label><input type="date" class="form-input text-sm"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- GLOBAL GAP -->
+                            <div class="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                                <label class="inline-flex items-center text-sm font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" class="mr-2 rounded text-green-600 focus:ring-green-500 w-4 h-4" onchange="toggleStandardDetails(this, 'tc-raw-globalgap')"> 
+                                    GLOBAL GAP
+                                </label>
+                                <div id="tc-raw-globalgap" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 mt-3 pl-6">
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Số giấy phép</label><input type="text" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày cấp</label><input type="date" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày hết hạn</label><input type="date" class="form-input text-sm"></div>
+                                </div>
+                            </div>
+
+                            <!-- ORGANIC -->
+                            <div class="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                                <label class="inline-flex items-center text-sm font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" class="mr-2 rounded text-green-600 focus:ring-green-500 w-4 h-4" onchange="toggleStandardDetails(this, 'tc-raw-organic')"> 
+                                    ORGANIC
+                                </label>
+                                <div id="tc-raw-organic" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 mt-3 pl-6">
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Số giấy phép</label><input type="text" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày cấp</label><input type="date" class="form-input text-sm"></div>
+                                    <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày hết hạn</label><input type="date" class="form-input text-sm"></div>
+                                </div>
+                            </div>
+
+                            <!-- KHÁC -->
+                            <div class="pt-1">
+                                <label class="inline-flex items-center text-sm font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" class="mr-2 rounded text-green-600 focus:ring-green-500 w-4 h-4" onchange="toggleStandardDetails(this, 'tc-raw-other')"> 
+                                    Tiêu chuẩn khác
+                                </label>
+                                <div id="tc-raw-other" class="hidden mt-3 pl-6">
+                                    <input type="text" class="form-input text-sm mb-3 max-w-md" placeholder="Vui lòng ghi rõ tên tiêu chuẩn...">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div><label class="block text-xs font-medium text-gray-500 mb-1">Số giấy phép</label><input type="text" class="form-input text-sm"></div>
+                                        <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày cấp</label><input type="date" class="form-input text-sm"></div>
+                                        <div><label class="block text-xs font-medium text-gray-500 mb-1">Ngày hết hạn</label><input type="date" class="form-input text-sm"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Document 4 -->
+                    <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                        <div class="mb-4">
+                            <h3 class="font-bold text-gray-800 text-lg mb-1">4. Công bố sản phẩm & Bảng test sản phẩm *</h3>
+                            <p class="text-xs text-gray-600">Điền số công bố và đính kèm tệp tương ứng với từng sản phẩm đăng ký tại mục I.8 (Ví dụ đăng ký 10 sản phẩm thì bắt buộc đính kèm đủ 10 bộ hồ sơ tương ứng).</p>
+                        </div>
+                        
+                        <!-- Container chứa danh sách hồ sơ công bố (sẽ tự động tăng/giảm theo danh sách sản phẩm) -->
+                        <div id="publication-list-container" class="space-y-4">
+                            <!-- Khởi tạo sẵn cho Sản phẩm 1 -->
+                            <div id="pub-item-1" class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <div class="flex flex-col md:flex-row md:items-center justify-between mb-3 pb-2 border-b border-gray-100">
+                                    <span class="font-semibold text-green-700 text-sm">
+                                        <i class="fa-solid fa-box-open mr-1"></i> 
+                                        Hồ sơ cho: <span id="pub-name-1" class="font-bold">Sản phẩm 1 (Chưa nhập tên)</span> *
+                                    </span>
+                                    <div class="file-upload-wrapper md:w-auto min-w-[200px] mt-2 md:mt-0">
+                                        <input type="file" class="file-upload-input" accept=".pdf,.jpg,.png" required onchange="updateFileName(this)">
+                                        <div class="file-upload-label py-1.5 text-xs bg-gray-50">
+                                            <i class="fa-solid fa-paperclip"></i> <span>Đính kèm HS công bố *</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Số công bố *</label>
+                                        <input type="text" class="form-input text-sm" required placeholder="Nhập số công bố...">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Ngày cấp *</label>
+                                        <input type="date" class="form-input text-sm" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Ngày hết hạn (Nếu có)</label>
+                                        <input type="date" class="form-input text-sm">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2 class="section-title"><i class="fa-solid fa-bullhorn"></i> III. TRUYỀN THÔNG</h2>
+                <p class="text-sm text-gray-600 mb-6 italic">Có thể chọn nhiều hình ảnh cho mỗi mục dưới đây.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-dashed border-gray-300 rounded-lg p-6 text-center bg-gray-50 hover:bg-gray-100 transition-colors relative">
+                        <input type="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" multiple accept="image/*" onchange="updateGalleryName(this, 'gallery1')">
+                        <div class="text-green-600 mb-2"><i class="fa-solid fa-images text-3xl"></i></div>
+                        <h3 class="font-semibold text-gray-700 mb-1">1. Hình ảnh ứng dụng sản phẩm</h3>
+                        <p class="text-xs text-gray-500" id="gallery1">Chưa có file nào được chọn</p>
+                    </div>
+
+                    <div class="border border-dashed border-gray-300 rounded-lg p-6 text-center bg-gray-50 hover:bg-gray-100 transition-colors relative">
+                        <input type="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" multiple accept="image/*" onchange="updateGalleryName(this, 'gallery2')">
+                        <div class="text-green-600 mb-2"><i class="fa-solid fa-industry text-3xl"></i></div>
+                        <h3 class="font-semibold text-gray-700 mb-1">2. Hình ảnh dây chuyền & quy mô</h3>
+                        <p class="text-xs text-gray-500" id="gallery2">Chưa có file nào được chọn</p>
+                    </div>
+
+                    <div class="border border-dashed border-gray-300 rounded-lg p-6 text-center bg-gray-50 hover:bg-gray-100 transition-colors relative">
+                        <input type="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" multiple accept="image/*" onchange="updateGalleryName(this, 'gallery3')">
+                        <div class="text-green-600 mb-2"><i class="fa-solid fa-handshake text-3xl"></i></div>
+                        <h3 class="font-semibold text-gray-700 mb-1">3. Hình ảnh xúc tiến thương mại</h3>
+                        <p class="text-xs text-gray-500" id="gallery3">Chưa có file nào được chọn</p>
+                    </div>
+
+                    <div class="border border-dashed border-gray-300 rounded-lg p-6 text-center bg-gray-50 hover:bg-gray-100 transition-colors relative">
+                        <input type="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" multiple accept="image/*" onchange="updateGalleryName(this, 'gallery4')">
+                        <div class="text-green-600 mb-2"><i class="fa-solid fa-star text-3xl"></i></div>
+                        <h3 class="font-semibold text-gray-700 mb-1">4. Hình ảnh đánh giá từ khách hàng</h3>
+                        <p class="text-xs text-gray-500" id="gallery4">Chưa có file nào được chọn</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="mt-8 text-center">
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-10 rounded-full shadow-lg transform transition-all hover:scale-105 hover:shadow-xl text-lg flex items-center justify-center gap-2 mx-auto">
+                    <i class="fa-solid fa-paper-plane"></i> GỬI HỒ SƠ ĐĂNG KÝ
+                </button>
+                <p class="text-sm text-gray-500 mt-4"><i class="fa-solid fa-shield-halved"></i> Thông tin của doanh nghiệp sẽ được bảo mật tuyệt đối.</p>
+            </div>
+        </form>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 text-center shadow-2xl transform scale-95 transition-transform duration-300" id="modalContent">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fa-solid fa-check text-4xl text-green-500"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">Đăng ký thành công!</h3>
+            <p class="text-gray-600 mb-8">Cảm ơn doanh nghiệp đã gửi hồ sơ tham gia Phiên chợ Xanh Tử tế. Ban tổ chức sẽ liên hệ lại trong thời gian sớm nhất.</p>
+            <button onclick="closeModal()" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors">
+                Hoàn tất
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Hiển thị form nhập thông tin giấy phép tương ứng khi tick chọn tiêu chuẩn
+        function toggleStandardDetails(checkbox, targetId) {
+            const targetEl = document.getElementById(targetId);
+            if (checkbox.checked) {
+                targetEl.classList.remove('hidden');
+            } else {
+                targetEl.classList.add('hidden');
+            }
+        }
+
+        // Xử lý hiển thị tên file khi người dùng chọn file
+        function updateFileName(input, isMultiple = false) {
+            const wrapper = input.parentElement;
+            const labelSpan = wrapper.querySelector('span');
+            
+            if (input.files && input.files.length > 0) {
+                wrapper.classList.add('has-file');
+                if (isMultiple) {
+                    labelSpan.textContent = `Đã chọn ${input.files.length} file`;
+                } else {
+                    let fileName = input.files[0].name;
+                    // Rút ngắn tên file nếu quá dài
+                    if(fileName.length > 20) {
+                        fileName = fileName.substring(0, 10) + '...' + fileName.substring(fileName.length - 7);
+                    }
+                    labelSpan.textContent = fileName;
+                }
+            } else {
+                wrapper.classList.remove('has-file');
+                labelSpan.textContent = isMultiple ? 'Đính kèm các file' : 'Đính kèm hình ảnh/file';
+            }
+        }
+
+        // Xử lý hiển thị tên file cho phần Truyền thông (giao diện kéo thả lớn)
+        function updateGalleryName(input, targetId) {
+            const targetElement = document.getElementById(targetId);
+            const parentBox = input.parentElement;
+            
+            if (input.files && input.files.length > 0) {
+                targetElement.textContent = `Đã chọn ${input.files.length} hình ảnh`;
+                targetElement.classList.remove('text-gray-500');
+                targetElement.classList.add('text-green-600', 'font-medium');
+                parentBox.classList.add('border-green-400', 'bg-green-50');
+            } else {
+                targetElement.textContent = 'Chưa có file nào được chọn';
+                targetElement.classList.add('text-gray-500');
+                targetElement.classList.remove('text-green-600', 'font-medium');
+                parentBox.classList.remove('border-green-400', 'bg-green-50');
+            }
+        }
+
+        // Đồng bộ Tên Sản phẩm sang Mục II.4 (Công bố sản phẩm)
+        function syncProductName(id, value) {
+            const targetSpan = document.getElementById(`pub-name-${id}`);
+            if (targetSpan) {
+                targetSpan.textContent = value.trim() ? value : `Sản phẩm ${id} (Chưa nhập tên)`;
+            }
+        }
+
+        // Logic quản lý và thêm sản phẩm động
+        let productCount = 1;
+        
+        // Tạo HTML cho hồ sơ công bố ở Mục II.4 tương ứng với sản phẩm mới
+        function createPublicationHTML(id) {
+            return `
+                <div id="pub-item-${id}" class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm mt-3 animate-[fadeIn_0.3s_ease-out]">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-3 pb-2 border-b border-gray-100">
+                        <span class="font-semibold text-green-700 text-sm">
+                            <i class="fa-solid fa-box-open mr-1"></i> 
+                            Hồ sơ cho: <span id="pub-name-${id}" class="font-bold">Sản phẩm ${id} (Chưa nhập tên)</span> *
+                        </span>
+                        <div class="file-upload-wrapper md:w-auto min-w-[200px] mt-2 md:mt-0">
+                            <input type="file" class="file-upload-input" accept=".pdf,.jpg,.png" required onchange="updateFileName(this)">
+                            <div class="file-upload-label py-1.5 text-xs bg-gray-50">
+                                <i class="fa-solid fa-paperclip"></i> <span>Đính kèm HS công bố *</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Số công bố *</label>
+                            <input type="text" class="form-input text-sm" required placeholder="Nhập số công bố...">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Ngày cấp *</label>
+                            <input type="date" class="form-input text-sm" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Ngày hết hạn (Nếu có)</label>
+                            <input type="date" class="form-input text-sm">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addProduct() {
+            productCount++;
+            const container = document.getElementById('product-container');
+            const publicationContainer = document.getElementById('publication-list-container');
+            
+            // 1. Thêm sản phẩm vào Mục I.8
+            const productHTML = `
+                <div id="product-item-${productCount}" class="product-item bg-white border border-gray-200 rounded-lg p-4 relative shadow-sm mt-4 animate-[fadeIn_0.3s_ease-out]">
+                    <button type="button" onclick="removeProduct(${productCount})" class="absolute -top-3 -right-3 bg-red-100 text-red-500 hover:bg-red-500 hover:text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors shadow-sm z-10">
+                        <i class="fa-solid fa-times"></i>
+                    </button>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Tên sản phẩm *</label>
+                            <input type="text" class="form-input text-sm" required placeholder="Tên sản phẩm..." oninput="syncProductName(${productCount}, this.value)">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Đơn vị đóng gói *</label>
+                                <input type="text" class="form-input text-sm" required placeholder="Hộp/Túi/Kg...">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Giá bán (VNĐ) *</label>
+                                <input type="number" class="form-input text-sm" required placeholder="100000">
+                            </div>
+                        </div>
+                        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Thành phần *</label>
+                                <input type="text" class="form-input text-sm" required placeholder="...">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Bảo quản *</label>
+                                <input type="text" class="form-input text-sm" required placeholder="...">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Hình ảnh *</label>
+                                <div class="file-upload-wrapper h-[42px]">
+                                    <input type="file" class="file-upload-input" accept="image/*" required onchange="updateFileName(this)">
+                                    <div class="file-upload-label h-full text-sm">
+                                        <i class="fa-solid fa-upload"></i> <span class="truncate max-w-[100px]">Chọn ảnh</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = productHTML;
+            container.appendChild(tempDiv.firstElementChild);
+
+            // 2. Thêm form khai báo tương ứng vào Mục II.4
+            const tempPubDiv = document.createElement('div');
+            tempPubDiv.innerHTML = createPublicationHTML(productCount);
+            publicationContainer.appendChild(tempPubDiv.firstElementChild);
+        }
+
+        function removeProduct(id) {
+            // Xóa ở danh sách sản phẩm
+            const productEl = document.getElementById(`product-item-${id}`);
+            if (productEl) {
+                productEl.remove();
+            }
+
+            // Xóa ở danh sách công bố tương ứng
+            const pubEl = document.getElementById(`pub-item-${id}`);
+            if (pubEl) {
+                pubEl.remove();
+            }
+        }
+
+        // Xử lý Submit Form
+        function handleFormSubmit(event) {
+            event.preventDefault(); // Ngăn chặn load lại trang
+            
+            const modal = document.getElementById('successModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('successModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                // Reset form sau khi đóng modal
+                document.getElementById('registrationForm').reset();
+                
+                // Ẩn lại các thông tin tiêu chuẩn con
+                document.querySelectorAll('[id^="tc-"]').forEach(el => {
+                    el.classList.add('hidden');
+                });
+
+                // Xóa các sản phẩm phát sinh phụ và giữ lại duy nhất Sản phẩm 1
+                const container = document.getElementById('product-container');
+                const publicationContainer = document.getElementById('publication-list-container');
+                
+                container.innerHTML = `
+                    <div id="product-item-1" class="product-item bg-white border border-gray-200 rounded-lg p-4 relative shadow-sm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Tên sản phẩm *</label>
+                                <input type="text" class="form-input text-sm" required placeholder="Tên sản phẩm..." oninput="syncProductName(1, this.value)">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Đơn vị đóng gói *</label>
+                                    <input type="text" class="form-input text-sm" required placeholder="Hộp/Túi/Kg...">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Giá bán (VNĐ) *</label>
+                                    <input type="number" class="form-input text-sm" required placeholder="100000">
+                                </div>
+                                </div>
+                                <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Thành phần *</label>
+                                    <input type="text" class="form-input text-sm" required placeholder="...">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Bảo quản *</label>
+                                    <input type="text" class="form-input text-sm" required placeholder="...">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Hình ảnh *</label>
+                                    <div class="file-upload-wrapper h-[42px]">
+                                        <input type="file" class="file-upload-input" accept="image/*" required onchange="updateFileName(this)">
+                                        <div class="file-upload-label h-full text-sm">
+                                            <i class="fa-solid fa-upload"></i> <span class="truncate max-w-[100px]">Chọn ảnh</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                publicationContainer.innerHTML = `
+                    <div id="pub-item-1" class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-3 pb-2 border-b border-gray-100">
+                            <span class="font-semibold text-green-700 text-sm">
+                                <i class="fa-solid fa-box-open mr-1"></i> 
+                                Hồ sơ cho: <span id="pub-name-1" class="font-bold">Sản phẩm 1 (Chưa nhập tên)</span> *
+                            </span>
+                            <div class="file-upload-wrapper md:w-auto min-w-[200px] mt-2 md:mt-0">
+                                <input type="file" class="file-upload-input" accept=".pdf,.jpg,.png" required onchange="updateFileName(this)">
+                                <div class="file-upload-label py-1.5 text-xs bg-gray-50">
+                                    <i class="fa-solid fa-paperclip"></i> <span>Đính kèm HS công bố *</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Số công bố *</label>
+                                <input type="text" class="form-input text-sm" required placeholder="Nhập số công bố...">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Ngày cấp *</label>
+                                <input type="date" class="form-input text-sm" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Ngày hết hạn (Nếu có)</label>
+                                <input type="date" class="form-input text-sm">
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                productCount = 1;
+
+                // Reset các nhãn upload hình ảnh/file
+                document.querySelectorAll('.file-upload-wrapper').forEach(el => el.classList.remove('has-file'));
+                document.querySelectorAll('.file-upload-label span').forEach(el => el.textContent = 'Đính kèm hình ảnh/file');
+                document.querySelectorAll('[id^="gallery"]').forEach(el => {
+                    el.textContent = 'Chưa có file nào được chọn';
+                    el.className = 'text-xs text-gray-500';
+                });
+            }, 300);
+        }
+
+        // Tạo hiệu ứng fadeIn mượt mà cho các phần tử thêm mới
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
