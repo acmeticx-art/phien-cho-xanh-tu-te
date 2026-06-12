@@ -1,11 +1,7 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState, useRef } from 'react';
-import { UploadCloud, FileText, CheckCircle2, AlertCircle, X, RotateCcw } from 'lucide-react';
+import { UploadCloud, FileText, AlertCircle, X } from 'lucide-react';
 import { UploadedFile } from '../types';
+import { uploadFileToStorage } from '../lib/supabase';
 
 interface FileUploaderProps {
   id: string;
@@ -14,6 +10,7 @@ interface FileUploaderProps {
   maxSizeMB?: number;
   label?: string;
   description?: string;
+  folder?: string;
   uploadedFiles: UploadedFile[];
   onUploadSuccess: (files: UploadedFile[]) => void;
   onRemoveFile: (fileId: string) => void;
@@ -27,6 +24,7 @@ export default function FileUploader({
   maxSizeMB = 10,
   label = 'Tải tài liệu / hình ảnh',
   description = 'Kéo thả file vào đây hoặc click để duyệt tìm',
+  folder = 'uploads',
   uploadedFiles,
   onUploadSuccess,
   onRemoveFile,
@@ -47,15 +45,14 @@ export default function FileUploader({
     }
   };
 
-  const processFiles = (files: FileList) => {
+  const processFiles = async (files: FileList) => {
     setError(null);
     const validFiles: File[] = [];
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      // Size check
       if (file.size > maxSizeMB * 1024 * 1024) {
-        setError(`Dung lượng file "${file.name}" vượt quá hạn mức ${maxSizeMB}MB.`);
+        setError(`Dung lượng file "${file.name}" vượt quá ${maxSizeMB}MB.`);
         continue;
       }
       validFiles.push(file);
@@ -63,81 +60,49 @@ export default function FileUploader({
 
     if (validFiles.length === 0) return;
 
-    // Simulate upload progress for each file
-    validFiles.forEach((file) => {
+    const newFiles: UploadedFile[] = [];
+
+    for (const file of validFiles) {
       const fileId = 'file_' + Math.random().toString(36).substr(2, 9);
-      setUploadProgress(prev => ({ ...prev, [fileId]: 0 }));
+      setUploadProgress(prev => ({ ...prev, [fileId]: 20 }));
 
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 25;
-        setUploadProgress(prev => ({ ...prev, [fileId]: progress }));
+      try {
+        const url = await uploadFileToStorage(file, folder);
+        setUploadProgress(prev => ({ ...prev, [fileId]: 100 }));
 
-        if (progress >= 100) {
-          clearInterval(interval);
-          
-          // Generate dataURL for image preview or mock url for documents
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const dataUrl = e.target?.result as string;
-            const newFile: UploadedFile = {
-              id: fileId,
-              name: file.name,
-              size: file.size,
-              type: file.type,
-              url: file.type.startsWith('image/') ? dataUrl : '#'
-            };
-            
-            if (multiple) {
-              onUploadSuccess([...uploadedFiles, newFile]);
-            } else {
-              onUploadSuccess([newFile]);
-            }
-            
-            // Clean up progress bar after brief success display
-            setTimeout(() => {
-              setUploadProgress(prev => {
-                const next = { ...prev };
-                delete next[fileId];
-                return next;
-              });
-            }, 800);
-          };
-          
-          if (file.type.startsWith('image/')) {
-            reader.readAsDataURL(file);
-          } else {
-            // Document
-            const newFile: UploadedFile = {
-              id: fileId,
-              name: file.name,
-              size: file.size,
-              type: file.type,
-              url: '#'
-            };
-            if (multiple) {
-              onUploadSuccess([...uploadedFiles, newFile]);
-            } else {
-              onUploadSuccess([newFile]);
-            }
-            setTimeout(() => {
-              setUploadProgress(prev => {
-                const next = { ...prev };
-                delete next[fileId];
-                return next;
-              });
-            }, 800);
-          }
-        }
-      }, 150);
-    });
+        newFiles.push({
+          id: fileId,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          url
+        });
+      } catch (err: any) {
+        setError(`Không thể tải lên "${file.name}": ${err.message}`);
+      } finally {
+        setTimeout(() => {
+          setUploadProgress(prev => {
+            const next = { ...prev };
+            delete next[fileId];
+            return next;
+          });
+        }, 800);
+      }
+    }
+
+    if (newFiles.length > 0) {
+      if (multiple) {
+        onUploadSuccess([...uploadedFiles, ...newFiles]);
+      } else {
+        onUploadSuccess([newFiles[0]]);
+      }
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragActive(false);
-
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       processFiles(e.dataTransfer.files);
     }
@@ -197,8 +162,8 @@ export default function FileUploader({
         onDrop={handleDrop}
         onClick={triggerInputClick}
         className={`relative border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition-all ${
-          isDragActive 
-            ? 'border-emerald-500 bg-emerald-50/50' 
+          isDragActive
+            ? 'border-emerald-500 bg-emerald-50/50'
             : 'border-slate-200 hover:border-emerald-400 bg-white hover:bg-slate-50/50'
         }`}
       >
@@ -212,7 +177,7 @@ export default function FileUploader({
         />
 
         <div className="flex flex-col items-center justify-center space-y-2">
-          <div className="p-2.5 rounded-full bg-slate-100/80 text-slate-500 group-hover:bg-slate-200/80 transition-colors">
+          <div className="p-2.5 rounded-full bg-slate-100/80 text-slate-500 transition-colors">
             <UploadCloud className="w-6 h-6 text-slate-400" />
           </div>
           <p className="text-xs font-semibold text-slate-700">{description}</p>
@@ -229,36 +194,34 @@ export default function FileUploader({
         </div>
       )}
 
-      {/* Progress Bars */}
       {Object.keys(uploadProgress).map((key) => (
         <div key={key} className="p-3.5 rounded-lg bg-slate-50 border border-slate-100 relative overflow-hidden">
           <div className="flex justify-between text-xs font-medium text-slate-600 mb-1">
-            <span className="truncate">Đang tải lên tài liệu...</span>
+            <span className="truncate">Đang tải lên Supabase...</span>
             <span>{uploadProgress[key]}%</span>
           </div>
           <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
-            <div 
-              className="bg-emerald-500 h-1.5 rounded-full transition-all duration-150"
+            <div
+              className="bg-emerald-500 h-1.5 rounded-full transition-all duration-300"
               style={{ width: `${uploadProgress[key]}%` }}
             ></div>
           </div>
         </div>
       ))}
 
-      {/* Show uploaded items list */}
       {uploadedFiles.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pt-1">
           {uploadedFiles.map((file) => {
-            const isImage = file.type.startsWith('image/') || file.url.startsWith('data:image/') || file.url !== '#';
+            const isImage = file.type.startsWith('image/');
             return (
-              <div 
-                key={file.id} 
+              <div
+                key={file.id}
                 className="relative overflow-hidden group border border-slate-200/85 rounded-xl bg-slate-50/50 p-2.5 flex items-center gap-2.5 shadow-xs transition-shadow hover:shadow-xs"
               >
-                {isImage && file.url !== '#' ? (
-                  <img 
-                    src={file.url} 
-                    alt={file.name} 
+                {isImage && file.url && file.url !== '#' ? (
+                  <img
+                    src={file.url}
+                    alt={file.name}
                     className="w-10 h-10 object-cover rounded-lg border border-slate-100 flex-shrink-0"
                     referrerPolicy="no-referrer"
                   />
@@ -267,7 +230,7 @@ export default function FileUploader({
                     <FileText className="w-5 h-5" />
                   </div>
                 )}
-                
+
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-slate-700 truncate" title={file.name}>
                     {file.name}

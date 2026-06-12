@@ -4,25 +4,26 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { 
-  Leaf, 
-  Sparkles, 
-  Award, 
-  Bookmark, 
-  CheckCircle, 
-  ShieldCheck, 
-  HelpCircle, 
-  PhoneCall, 
-  Mail, 
-  MapPin, 
-  Building2, 
-  ArrowRight, 
+import {
+  Leaf,
+  Sparkles,
+  Award,
+  Bookmark,
+  CheckCircle,
+  ShieldCheck,
+  HelpCircle,
+  PhoneCall,
+  Mail,
+  MapPin,
+  Building2,
+  ArrowRight,
   RotateCcw,
   CheckCircle2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BusinessRegistration, ApplicationStatus, AppConfig } from './types';
 import { SEEDED_REGISTRATIONS } from './mockData';
+import { supabase } from './lib/supabase';
 import Introduction from './components/Introduction';
 import RegistrationForm from './components/RegistrationForm';
 import AdminPanel from './components/AdminPanel';
@@ -51,40 +52,49 @@ export default function App() {
   // App home configuration (tagline, banner heading and intro text)
   const [appConfig, setAppConfig] = useState<AppConfig>(DEFAULT_CONFIG);
 
-  // Load from local storage on boot
+  // Load from Supabase on boot
   useEffect(() => {
-    // 1. Submitted registrations
-    const savedSubmissions = localStorage.getItem('px_tute_farm_submissions');
-    if (savedSubmissions) {
-      try {
-        setRegistrations(JSON.parse(savedSubmissions));
-      } catch (e) {
-        setRegistrations(SEEDED_REGISTRATIONS);
+    async function loadData() {
+      // 1. Load submissions from Supabase
+      const { data, error } = await supabase
+        .from('dang_ky')
+        .select('id, trang_thai, data_json, created_at')
+        .not('data_json', 'is', null)
+        .order('created_at', { ascending: false });
+
+      if (!error && data && data.length > 0) {
+        const loaded: BusinessRegistration[] = data.map((row: any) => ({
+          ...row.data_json,
+          id: row.id,
+          status: row.trang_thai as ApplicationStatus,
+        }));
+        setRegistrations(loaded);
+        localStorage.setItem('px_tute_farm_submissions', JSON.stringify(loaded));
+      } else {
+        // Fall back to localStorage
+        const savedSubmissions = localStorage.getItem('px_tute_farm_submissions');
+        if (savedSubmissions) {
+          try { setRegistrations(JSON.parse(savedSubmissions)); }
+          catch { setRegistrations(SEEDED_REGISTRATIONS); }
+        } else {
+          setRegistrations(SEEDED_REGISTRATIONS);
+        }
       }
-    } else {
-      setRegistrations(SEEDED_REGISTRATIONS);
-      localStorage.setItem('px_tute_farm_submissions', JSON.stringify(SEEDED_REGISTRATIONS));
+
+      // 2. Drafts from localStorage
+      const savedDraft = localStorage.getItem('px_tute_farm_draft');
+      if (savedDraft) {
+        try { setActiveDraft(JSON.parse(savedDraft)); } catch { /* ignore */ }
+      }
+
+      // 3. Config from localStorage
+      const savedConfig = localStorage.getItem('px_tute_farm_config');
+      if (savedConfig) {
+        try { setAppConfig(JSON.parse(savedConfig)); } catch { /* ignore */ }
+      }
     }
 
-    // 2. Drafts
-    const savedDraft = localStorage.getItem('px_tute_farm_draft');
-    if (savedDraft) {
-      try {
-        setActiveDraft(JSON.parse(savedDraft));
-      } catch (e) {
-        // Safe check
-      }
-    }
-
-    // 3. Configurations
-    const savedConfig = localStorage.getItem('px_tute_farm_config');
-    if (savedConfig) {
-      try {
-        setAppConfig(JSON.parse(savedConfig));
-      } catch (e) {
-        // Safe check
-      }
-    }
+    loadData();
   }, []);
 
   const handleUpdateConfig = (newConfig: AppConfig) => {
@@ -111,8 +121,7 @@ export default function App() {
   };
 
   // Final submit handler
-  const handleFinalSubmit = (submissionData: BusinessRegistration) => {
-    // Ensure status is PENDING and updated
+  const handleFinalSubmit = async (submissionData: BusinessRegistration) => {
     const finalSubmission: BusinessRegistration = {
       ...submissionData,
       status: ApplicationStatus.PENDING,
@@ -120,28 +129,47 @@ export default function App() {
       updatedAt: new Date().toISOString()
     };
 
-    // Prepend to submissions list
-    const updatedSubmissions = [finalSubmission, ...registrations];
+    // Save to Supabase
+    const { data: inserted, error } = await supabase.from('dang_ky').insert({
+      ten_co_so: finalSubmission.companyName,
+      ho_ten: finalSubmission.contact.fullName,
+      chuc_vu: finalSubmission.contact.position,
+      so_dien_thoai: finalSubmission.contact.phoneNumber,
+      email: finalSubmission.contact.email,
+      tinh_thanh: finalSubmission.province,
+      trang_thai: ApplicationStatus.PENDING,
+      data_json: finalSubmission,
+    }).select('id').single();
+
+    if (error) {
+      alert('Lỗi khi lưu hồ sơ: ' + error.message);
+      return;
+    }
+
+    // Use the Supabase UUID as the canonical ID
+    const savedSubmission = inserted ? { ...finalSubmission, id: inserted.id } : finalSubmission;
+
+    const updatedSubmissions = [savedSubmission, ...registrations];
     saveSubmissionsToStorage(updatedSubmissions);
-    
-    // Set latest submitted for confirmation view
-    setLatestSubmitted(finalSubmission);
-    // Clear draft
+    setLatestSubmitted(savedSubmission);
     handleClearDraft();
-    // Redirect to Success tab
     setActiveView('SUCCESS');
   };
 
   // Admin approval update state handler
-  const handleAdminUpdateStatus = (id: string, status: ApplicationStatus, notes: string) => {
+  const handleAdminUpdateStatus = async (id: string, status: ApplicationStatus, notes: string) => {
+    const updatedReg = registrations.find(r => r.id === id);
+    if (updatedReg) {
+      const newReg = { ...updatedReg, status, adminNotes: notes, updatedAt: new Date().toISOString() };
+      await supabase.from('dang_ky').update({
+        trang_thai: status,
+        data_json: newReg,
+      }).eq('id', id);
+    }
+
     const updated = registrations.map(reg => {
       if (reg.id === id) {
-        return {
-          ...reg,
-          status,
-          adminNotes: notes,
-          updatedAt: new Date().toISOString()
-        };
+        return { ...reg, status, adminNotes: notes, updatedAt: new Date().toISOString() };
       }
       return reg;
     });
