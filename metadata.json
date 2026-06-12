@@ -1,0 +1,6 @@
+{
+  "name": "Đăng Ký Phiên Chợ Xanh Tử Tế",
+  "description": "Hệ thống đăng ký thành viên và quản lý hồ sơ doanh nghiệp tham gia dự án Phiên chợ Xanh Tử tế. Cốt lõi sạch, lành và minh bạch.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
