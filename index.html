@@ -899,14 +899,13 @@
                 }
 
                 // === III. Truyền thông ===
-                const galleries = document.querySelectorAll('[id^="gallery"] + .text-green-600, section-iii, .section-card:last-of-type input[type="file"]');
-                const gallerySections = document.querySelectorAll('.section-card:last-of-type [data-gallery]');
-                const mediaInputs = [...document.querySelectorAll('.section-card')].find(s => s.querySelector('h2')?.textContent?.includes('TRUYỀN THÔNG'))?.querySelectorAll('input[type="file"]') || [];
+                const mediaSection = [...document.querySelectorAll('.section-card')].find(s => s.querySelector('h2')?.textContent?.includes('TRUYỀN THÔNG'));
+                const mediaInputs = mediaSection ? [...mediaSection.querySelectorAll('input[type="file"]')] : [];
                 const [gallery1, gallery2, gallery3, gallery4] = await Promise.all([
-                    uploadMultiple(mediaInputs[0], 'truyen-thong'),
-                    uploadMultiple(mediaInputs[1], 'truyen-thong'),
-                    uploadMultiple(mediaInputs[2], 'truyen-thong'),
-                    uploadMultiple(mediaInputs[3], 'truyen-thong'),
+                    uploadMultiple(mediaInputs[0] || null, 'truyen-thong'),
+                    uploadMultiple(mediaInputs[1] || null, 'truyen-thong'),
+                    uploadMultiple(mediaInputs[2] || null, 'truyen-thong'),
+                    uploadMultiple(mediaInputs[3] || null, 'truyen-thong'),
                 ]);
 
                 // === Ghi vào Supabase ===
@@ -942,8 +941,13 @@
                 }, 10);
 
             } catch (err) {
-                console.error(err);
-                alert('Có lỗi xảy ra khi gửi hồ sơ: ' + (err.message || err));
+                console.error('Lỗi gửi hồ sơ:', err);
+                let msg = 'Có lỗi xảy ra khi gửi hồ sơ.\n\n';
+                if (err.code) msg += 'Mã lỗi: ' + err.code + '\n';
+                if (err.message) msg += 'Chi tiết: ' + err.message + '\n';
+                if (err.hint) msg += 'Gợi ý: ' + err.hint + '\n';
+                if (!err.code && !err.message) msg += String(err);
+                alert(msg);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> GỬI HỒ SƠ ĐĂNG KÝ';
