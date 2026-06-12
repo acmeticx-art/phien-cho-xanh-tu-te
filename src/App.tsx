@@ -57,16 +57,41 @@ export default function App() {
     async function loadData() {
       // 1. Load submissions from Supabase
       const { data, error } = await supabase
-        .from('dang_ky')
-        .select('id, trang_thai, data_json, created_at')
-        .not('data_json', 'is', null)
+        .from('registrations')
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (!error && data && data.length > 0) {
         const loaded: BusinessRegistration[] = data.map((row: any) => ({
-          ...row.data_json,
           id: row.id,
-          status: row.trang_thai as ApplicationStatus,
+          createdAt: row.created_at,
+          updatedAt: row.updated_at,
+          status: row.status as ApplicationStatus,
+          adminNotes: row.admin_notes,
+          companyName: row.company_name,
+          contact: row.contact,
+          province: row.province,
+          hqAddress: row.hq_address,
+          hqImages: row.hq_images || [],
+          branchAddress: row.branch_address,
+          branchImages: row.branch_images || [],
+          factoryAddress: row.factory_address,
+          factoryImages: row.factory_images || [],
+          materialAddress: row.material_address,
+          materialImages: row.material_images || [],
+          companyHistory: row.company_history,
+          companyHistoryFile: row.company_history_file,
+          products: row.products || [],
+          businessLicense: row.business_license || {},
+          factoryStandard: row.factory_standard || {},
+          materialStandard: row.material_standard || {},
+          productAnnouncement: row.product_announcement || {},
+          mediaProductUsage: row.media_product_usage || [],
+          mediaProductionLine: row.media_production_line || [],
+          mediaTradePromotion: row.media_trade_promotion || [],
+          mediaCustomerReview: row.media_customer_review || [],
+          isCommitted: row.is_committed,
+          committerName: row.committer_name,
         }));
         setRegistrations(loaded);
         localStorage.setItem('px_tute_farm_submissions', JSON.stringify(loaded));
@@ -130,15 +155,32 @@ export default function App() {
     };
 
     // Save to Supabase
-    const { data: inserted, error } = await supabase.from('dang_ky').insert({
-      ten_co_so: finalSubmission.companyName,
-      ho_ten: finalSubmission.contact.fullName,
-      chuc_vu: finalSubmission.contact.position,
-      so_dien_thoai: finalSubmission.contact.phoneNumber,
-      email: finalSubmission.contact.email,
-      tinh_thanh: finalSubmission.province,
-      trang_thai: ApplicationStatus.PENDING,
-      data_json: finalSubmission,
+    const { data: inserted, error } = await supabase.from('registrations').insert({
+      company_name: finalSubmission.companyName,
+      contact: finalSubmission.contact,
+      province: finalSubmission.province,
+      hq_address: finalSubmission.hqAddress,
+      hq_images: finalSubmission.hqImages,
+      branch_address: finalSubmission.branchAddress,
+      branch_images: finalSubmission.branchImages,
+      factory_address: finalSubmission.factoryAddress,
+      factory_images: finalSubmission.factoryImages,
+      material_address: finalSubmission.materialAddress,
+      material_images: finalSubmission.materialImages,
+      company_history: finalSubmission.companyHistory,
+      company_history_file: finalSubmission.companyHistoryFile,
+      products: finalSubmission.products,
+      business_license: finalSubmission.businessLicense,
+      factory_standard: finalSubmission.factoryStandard,
+      material_standard: finalSubmission.materialStandard,
+      product_announcement: finalSubmission.productAnnouncement,
+      media_product_usage: finalSubmission.mediaProductUsage,
+      media_production_line: finalSubmission.mediaProductionLine,
+      media_trade_promotion: finalSubmission.mediaTradePromotion,
+      media_customer_review: finalSubmission.mediaCustomerReview,
+      is_committed: finalSubmission.isCommitted,
+      committer_name: finalSubmission.committerName,
+      status: ApplicationStatus.PENDING,
     }).select('id').single();
 
     if (error) {
@@ -158,14 +200,10 @@ export default function App() {
 
   // Admin approval update state handler
   const handleAdminUpdateStatus = async (id: string, status: ApplicationStatus, notes: string) => {
-    const updatedReg = registrations.find(r => r.id === id);
-    if (updatedReg) {
-      const newReg = { ...updatedReg, status, adminNotes: notes, updatedAt: new Date().toISOString() };
-      await supabase.from('dang_ky').update({
-        trang_thai: status,
-        data_json: newReg,
-      }).eq('id', id);
-    }
+    await supabase.from('registrations').update({
+      status,
+      admin_notes: notes,
+    }).eq('id', id);
 
     const updated = registrations.map(reg => {
       if (reg.id === id) {
